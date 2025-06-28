@@ -1,0 +1,55 @@
+
+
+services:
+  api:
+    build: .
+    container_name: movie-debate-api
+    ports:
+      - "8080:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - EMBED_MODEL=${EMBED_MODEL:-text-embedding-3-small}
+      - EMBED_DIM=${EMBED_DIM:-1536}
+      - CACHE_PATH=/app/data/embeddings_cache.npy
+    volumes:
+      - ./data:/app/data
+      - ./data/movies.csv:/app/movies.csv
+      - ./demo_profiles.json:/app/demo_profiles.json
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  ui:
+    build: ./streamlit_app
+    container_name: movie-debate-ui
+    ports:
+      - "8501:8501"
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      - API_URL=http://api:8000
+    restart: unless-stopped
+
+  # CLI service for one-off commands
+  cli:
+    build: .
+    container_name: movie-debate-cli
+    profiles: ["cli"]  # Only start when explicitly requested
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - EMBED_MODEL=${EMBED_MODEL:-text-embedding-3-small}
+      - EMBED_DIM=${EMBED_DIM:-1536}
+      - CACHE_PATH=/app/data/embeddings_cache.npy
+    volumes:
+      - ./data:/app/data
+      - ./data/movies.csv:/app/movies.csv
+      - ./demo_profiles.json:/app/demo_profiles.json
+    command: ["python", "cli.py", "--profiles", "demo_profiles.json"]
+
+volumes:
+  movie_data:
+    driver: local 

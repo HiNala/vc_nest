@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "name": "Alice",
+      "preferences": "Love romantic comedies, feel-good movies with happy endings, strong character development, and heartwarming stories. Enjoy films like The Princess Bride, La La Land, and romantic dramas.",
+      "dislikes": "Horror movies, excessive violence, sad endings, zombie films, and anything too dark or depressing"
+    },
+    {
+      "name": "Bob", 
+      "preferences": "Sci-fi enthusiast who loves complex plots, technological themes, mind-bending concepts, and futuristic settings. Big fan of movies like Inception, The Matrix, and cerebral thrillers.",
+      "dislikes": "Romance-heavy films, musicals, slow pacing, and overly sentimental movies"
+    },
+    {
+      "name": "Charlie",
+      "preferences": "Action movie fan who enjoys superhero films, adventure stories, fast-paced entertainment, and epic battles. Love Marvel movies, war films, and high-octane thrillers.",
+      "dislikes": "Slow burns, art house films, excessive dialogue, and period dramas without action"
+    },
+    {
+      "name": "Dana",
+      "preferences": "Appreciates psychological thrillers, mystery movies with plot twists, dark themes, sophisticated narratives, and character studies. Enjoys films like The Silence of the Lambs and Memento.",
+      "dislikes": "Predictable plots, children's movies, overly happy endings, and simple stories"
+    }
+  ]
+} 
