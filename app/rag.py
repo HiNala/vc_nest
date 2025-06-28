@@ -29,7 +29,7 @@ async def search(req: QueryRequest):
     if not q:
         raise HTTPException(400, "Query must not be empty.")
 
-    reranked_results = index.search(
+    resp = index.search(
         namespace="example-namespace",
         query={
             "top_k": 5,
@@ -37,7 +37,7 @@ async def search(req: QueryRequest):
                 'text': req.query
             }
         },
-        fields = "text"   
+        fields = ["text"]   
     )
 
     # ————— 3) Format results —————
@@ -46,7 +46,7 @@ async def search(req: QueryRequest):
             title=match.metadata.get("title", "<unknown>"),
             score=match.score
         )
-        for match in reranked_results.matches
+        for match in resp.matches
     ]
     return SearchResponse(movies=movies)
 
