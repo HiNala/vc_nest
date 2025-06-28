@@ -8,13 +8,6 @@ import uvicorn
 class QueryRequest(BaseModel):
     query: str
 
-class MovieHit(BaseModel):
-    title: str
-    score: float
-
-class SearchResponse(BaseModel):
-    movies: list[MovieHit]
-
 # ————— Init Pinecone & FastAPI —————
 app = FastAPI()
 
@@ -23,7 +16,7 @@ pc = Pinecone(api_key='pcsk_3R7ydo_J5XoRYLTZpVreUhC6UuUbjPfB258sBdqFX8VKNi9LnCJC
 index = pc.Index("movies2")  # your existing index name
 NAMESPACE = "example-namespace"
 
-@app.post("/search", response_model=SearchResponse)
+@app.post("/search", response_model=list[str])
 async def search(req: QueryRequest):
     q = req.query.strip()
     if not q:
@@ -37,18 +30,14 @@ async def search(req: QueryRequest):
                 'text': req.query
             }
         },
-        fields = ["text"]   
+        fields=["text"]
     )
-
-    # ————— 3) Format results —————
-    movies = [
-        MovieHit(
-            title=match.metadata.get("title", "<unknown>"),
-            score=match.score
-        )
-        for match in resp.matches
-    ]
-    return SearchResponse(movies=movies)
+    
+    # The pinecone response object can be treated like a dictionary
+    hits = resp.get('result', {}).get('hits', [])
+    movie_ids = [hit.get('_id') for hit in hits if hit.get('_id')]
+    
+    return movie_ids
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)
